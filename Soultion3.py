@@ -16,7 +16,7 @@ class Stack:
         return self.stack[-1]
     
 s1 = Stack()
-s1.push(1)
+s1.push(1) 
 s1.push(2)
 s1.push(3)
 s1.push(4)
@@ -96,6 +96,7 @@ m1.set(0, 0, 2)
 m1.set(1, 1, 3)
 m1.set(1, 2, 4)
 print(m1.matrix)
+print(m.transpose())
 print(m.multiply(m1).matrix)
 m.apply(lambda x: x*2)
 print(m.matrix)
