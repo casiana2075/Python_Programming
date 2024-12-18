@@ -6,5 +6,5 @@
 - **files.py**: Work with encrypted files.
 - **config.py**: General configurations.
 
-![RSA](![alt text](image.png))
+RSA ![alt text](image.png)
 
