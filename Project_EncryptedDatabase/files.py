@@ -42,8 +42,11 @@ def decrypt_file(file_path, private_key):
 def delete_encrypted_file(file_path):
     """Deletee an encrypted file and itsd metadata"""
     if os.path.exists(file_path):
-        os.remove(file_path)
-        print(f"Encrypted file '{file_path}' deleted.")
+        if file_path.endswith(".enc"):
+            os.remove(file_path)
+            print(f"Encrypted file '{file_path}' deleted.")
+        else:
+            print(f"File '{file_path}' is not an encrypted file.")
     else:
         print(f"File '{file_path}' does not exist.")
 
