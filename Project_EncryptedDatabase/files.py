@@ -12,6 +12,13 @@ def encrypt_file(file_path, public_key):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} dont exist.")
     
+    if file_path.endswith(".enc"):
+        raise ValueError("File is already encrypted.")
+    
+    allowed_extensions = ['.txt', '.img', '.png', '.jpg', '.pdf']
+    if not any(file_path.endswith(ext) for ext in allowed_extensions):
+        raise ValueError(f"File type not allowed. Allowed types are: {', '.join(allowed_extensions)}")
+    
     with open(file_path, 'rb') as file:
         plaintext = file.read()
 
