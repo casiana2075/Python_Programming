@@ -32,7 +32,7 @@ def encrypt_file(file_path, public_key):
 
     # save metadata
     add_or_update_file_metadata(encrypted_file_path, "RSA", str(public_key), file_size, file_type)
-    print(f"File '{file_path}' encrypted and saved as '{encrypted_file_path}'.")
+    print(f"File '{os.path.basename(file_path)}' encrypted and saved as '{os.path.basename(encrypted_file_path)}'.")
 
 def decrypt_file(file_path, private_key):
     """Decryt an encrypted file and display its content"""
@@ -54,20 +54,20 @@ def decrypt_file(file_path, private_key):
     with open(decrypted_file_path, 'wb') as dec_file:
         dec_file.write(decrypted_content)
     try:
-        print(f"Decrypted content of '{file_path}':\n{decrypted_content}")
+        print(f"Decrypted content of '{os.path.basename(file_path)}':\n{decrypted_content}")
     except UnicodeDecodeError:
-        ProcessLookupError(f"See decrypted content of '{file_path}' saved as '{decrypted_file_path}'.")
+        ProcessLookupError(f"See decrypted content of '{os.path.basename(file_path)}' saved as '{os.path.basename(decrypted_file_path)}'.")
 
 def delete_encrypted_file(file_path):
     """Deletee an encrypted file and itsd metadata"""
     if os.path.exists(file_path):
         if file_path.endswith(".enc"):
             os.remove(file_path)
-            print(f"Encrypted file '{file_path}' deleted.")
+            print(f"Encrypted file '{os.path.basename(file_path)}' deleted.")
         else:
-            print(f"File '{file_path}' is not an encrypted file.")
+            print(f"File '{os.path.basename(file_path)}' is not an encrypted file.")
     else:
-        print(f"File '{file_path}' does not exist.")
+        print(f"File '{os.path.basename(file_path)}' does not exist.")
 
     # delete metadata
-    delete_file_metadata(file_path)
+    delete_file_metadata(os.path.basename(file_path))
