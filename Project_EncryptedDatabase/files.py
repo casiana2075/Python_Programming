@@ -1,4 +1,5 @@
 import os
+import base64
 from encryption import encrypt, decrypt
 from database import add_or_update_file_metadata, get_file_metadata, delete_file_metadata
 from config import ENCRYPTED_FILES_DIR
@@ -11,11 +12,14 @@ def encrypt_file(file_path, public_key):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} dont exist.")
     
-    with open(file_path, 'r') as file:
+    with open(file_path, 'rb') as file:
         plaintext = file.read()
 
-    # encrypt yhe content of a file
-    encrypted_content = encrypt(plaintext, public_key)
+    # Encode the binary data to base64
+    plaintext_base64 = base64.b64encode(plaintext).decode('utf-8')
+
+    # Encrypt the content of the file
+    encrypted_content = encrypt(plaintext_base64, public_key)
     
     # save encripted content to a new file
     encrypted_file_path = os.path.join(ENCRYPTED_FILES_DIR, os.path.splitext(os.path.basename(file_path))[0] + ".enc")
@@ -40,8 +44,19 @@ def decrypt_file(file_path, private_key):
         encrypted_content = list(map(int, enc_file.read().split()))
 
     # dcrypt content
-    decrypted_content = decrypt(encrypted_content, private_key)
-    print(f"Decrypted content of '{file_path}':\n{decrypted_content}")
+    decrypted_base64 = decrypt(encrypted_content, private_key)
+
+    # decode from base64 to binary
+    decrypted_content = base64.b64decode(decrypted_base64)
+
+    # save decrypted content to a new file (usefull for images, pdfs)
+    decrypted_file_path = os.path.splitext(file_path)[0] + "_decrypted" + metadata[5]
+    with open(decrypted_file_path, 'wb') as dec_file:
+        dec_file.write(decrypted_content)
+    try:
+        print(f"Decrypted content of '{file_path}':\n{decrypted_content}")
+    except UnicodeDecodeError:
+        ProcessLookupError(f"See decrypted content of '{file_path}' saved as '{decrypted_file_path}'.")
 
 def delete_encrypted_file(file_path):
     """Deletee an encrypted file and itsd metadata"""
