@@ -1,6 +1,6 @@
 import os
 from encryption import encrypt, decrypt
-from database import add_file_metadata, get_file_metadata, delete_file_metadata
+from database import add_or_update_file_metadata, get_file_metadata, delete_file_metadata
 from config import ENCRYPTED_FILES_DIR
 
 #make sure the encrypted files directory exists
@@ -18,12 +18,16 @@ def encrypt_file(file_path, public_key):
     encrypted_content = encrypt(plaintext, public_key)
     
     # save encripted content to a new file
-    encrypted_file_path = os.path.join(ENCRYPTED_FILES_DIR, os.path.basename(file_path) + ".enc")
+    encrypted_file_path = os.path.join(ENCRYPTED_FILES_DIR, os.path.splitext(os.path.basename(file_path))[0] + ".enc")
     with open(encrypted_file_path, 'w') as enc_file:
         enc_file.write(' '.join(map(str, encrypted_content)))
 
+    # get file size and type
+    file_size = os.path.getsize(file_path)
+    file_type = os.path.splitext(file_path)[1]
+
     # save metadata
-    add_file_metadata(encrypted_file_path, "RSA", str(public_key))
+    add_or_update_file_metadata(encrypted_file_path, "RSA", str(public_key), file_size, file_type)
     print(f"File '{file_path}' encrypted and saved as '{encrypted_file_path}'.")
 
 def decrypt_file(file_path, private_key):

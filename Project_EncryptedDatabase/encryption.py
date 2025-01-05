@@ -57,6 +57,6 @@ def encrypt(mes, pub_key):
     return [pow(ord(char), e, n) for char in mes]
 
 def decrypt(ciph_txt, priv_key):
-    """decript with public key"""
+    """decript with private key"""
     d, n = priv_key
     return ''.join([chr(pow(char, d, n)) for char in ciph_txt])

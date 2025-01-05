@@ -23,9 +23,11 @@ def initialize_database():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS file_metadata (
             id SERIAL PRIMARY KEY,
-            file_path TEXT NOT NULL,
+            file_path TEXT NOT NULL UNIQUE,
             encryption_method TEXT NOT NULL,
             encryption_key TEXT NOT NULL,
+            file_size BIGINT NOT NULL,
+            file_type TEXT NOT NULL,
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -33,14 +35,20 @@ def initialize_database():
     cursor.close()
     conn.close()
 
-def add_file_metadata(file_path, encryption_method, encryption_key):
-    """Add metadata for a specific file."""
+def add_or_update_file_metadata(file_path, encryption_method, encryption_key, file_size, file_type):
+    """Add or update metadata for a specific file."""
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO file_metadata (file_path, encryption_method, encryption_key)
-        VALUES (%s, %s, %s)
-    """, (file_path, encryption_method, encryption_key))
+        INSERT INTO file_metadata (file_path, encryption_method, encryption_key, file_size, file_type)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (file_path) DO UPDATE SET
+            encryption_method = EXCLUDED.encryption_method,
+            encryption_key = EXCLUDED.encryption_key,
+            file_size = EXCLUDED.file_size,
+            file_type = EXCLUDED.file_type,
+            timestamp = CURRENT_TIMESTAMP
+    """, (file_path, encryption_method, encryption_key, file_size, file_type))
     conn.commit()
     cursor.close()
     conn.close()
