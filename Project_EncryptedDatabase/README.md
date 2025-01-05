@@ -28,7 +28,7 @@ ENCRYPTED_FILES_DIR = os.path.join(os.getcwd(), "encrypted_files")
 # Database configuration
 DB_CONFIG = {
     "host": "your_host",
-    "port": your_port,
+    "port": "your_port",
     "database": "your_database_name",
     "user": "your_username",
     "password": "your_password"
