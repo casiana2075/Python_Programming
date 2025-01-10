@@ -8,7 +8,16 @@ from config import ENCRYPTED_FILES_DIR
 os.makedirs(ENCRYPTED_FILES_DIR, exist_ok=True)
 
 def encrypt_file(file_path, public_key):
-    """encrypt a file and save it to the encrypted files directory"""
+    """
+    Encrypt a file and save it to the encrypted files directory.
+    
+    Parameters:
+        file_path (str): the path to the file to encrypt.
+        public_key (tuple): the public key to use for encryption.
+        
+    Prints:
+        A message indicating the success of the operation.
+    """
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} dont exist.")
     
@@ -42,7 +51,17 @@ def encrypt_file(file_path, public_key):
     print(f"File '{os.path.basename(file_path)}' encrypted and saved as '{os.path.basename(encrypted_file_path)}'.")
 
 def decrypt_file(file_path, private_key):
-    """Decryt an encrypted file and display its content"""
+    """
+    Decryt an encrypted file and display its content or save it to a new file.
+    
+    Parameters:
+        file_path (str): the path to the encrypted file.
+        private_key (tuple): the private key to use for decryption.
+        
+    Prints:
+        The decrypted content of the file if it can be displayed.
+        Else a message indicating that the content has been saved to a new file.
+    """
     metadata = get_file_metadata(file_path)
     if not metadata:
         raise ValueError(f"No metadata found for file {file_path}.")
@@ -66,7 +85,16 @@ def decrypt_file(file_path, private_key):
         ProcessLookupError(f"See decrypted content of '{os.path.basename(file_path)}' saved as '{os.path.basename(decrypted_file_path)}'.")
 
 def delete_encrypted_file(file_path):
-    """Deletee an encrypted file and itsd metadata"""
+    """
+    Delete an encrypted file and its metadata from the database.
+    
+    Parameters:
+        file_path (str): the path to the encrypted file.
+        
+    Prints:
+        A message indicating the success of the operation.
+        Else a message indicating that the file does not exist or is not an encrypted file.
+    """
     if os.path.exists(file_path):
         if file_path.endswith(".enc"):
             os.remove(file_path)

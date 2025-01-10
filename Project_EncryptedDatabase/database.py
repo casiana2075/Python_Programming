@@ -2,7 +2,12 @@ import psycopg2
 from config import DB_CONFIG
 
 def get_connection():
-    """Return a connection to the database."""
+    """ 
+    Establishes a connection to the database using the configuration provided in the DB_CONFIG dictionary.
+
+    Returns:
+        A connection to the database.
+    """
     try:
         conn = psycopg2.connect(
             host=DB_CONFIG["host"],
@@ -17,7 +22,22 @@ def get_connection():
         raise
 
 def initialize_database():
-    """Create table file_metadata if not exists"""
+    """
+    Establishes a connection to the database, executes the SQL statement to create the table,
+    commits the transaction, and then closes the connection.
+
+    Columns in the 'file_metadata' table:
+        - id: a unique identifier for each record (is a primary key).
+        - file_path: path to the file (must be unique).
+        - encryption_method: method used to encrypt the file.
+        - encryption_key: key used when encrypt.
+        - file_size: size of the file (in bytes).
+        - file_type: type of the file.
+        - timestamp: timestamp when the record was created.
+
+    Returns:
+        None
+    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -36,7 +56,19 @@ def initialize_database():
     conn.close()
 
 def add_or_update_file_metadata(file_path, encryption_method, encryption_key, file_size, file_type):
-    """Add or update metadata for a specific file."""
+    """
+    Add or update metadata for a specific file.
+
+    Parameters:
+        file_path (str): path to the file.
+        encryption_method (str): method used to encrypt the file.
+        encryption_key (str): key used for encryption.
+        file_size(int): size of the file in bytes.
+        file_type(str): type of the file.
+
+    Returns:
+        None
+    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -54,7 +86,15 @@ def add_or_update_file_metadata(file_path, encryption_method, encryption_key, fi
     conn.close()
 
 def get_file_metadata(file_path):
-    """Return metadata for a specific file."""
+    """
+    Retrieves metadata for a specific file from the database.
+
+    Parameters:
+        file_path(str): The path of the file for which metadata is to be retrieved.
+
+    Returns:
+        tuple: A tuple containing the metadata of the file if found, otherwise None.
+    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -66,7 +106,15 @@ def get_file_metadata(file_path):
     return result
 
 def delete_file_metadata(file_path):
-    """Delete metadata for a specific file."""
+    """
+    Deletes metadata for a specific file from the database.
+    
+    Parameters:
+        file_path(str): The path of the file for which metadata is to be deleted.
+        
+    Returns:
+        None
+    """
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
